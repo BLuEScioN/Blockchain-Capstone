@@ -18,11 +18,12 @@
  *
  */
 
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 const infuraKey = "22bf701267374bd58d48dc882b501e23";
 
 const fs = require('fs');
 const mnemonic = fs.readFileSync(".secret").toString().trim();
+// console.log('mnemonic', mnemonic)
 
 module.exports = {
     /**
@@ -44,7 +45,7 @@ module.exports = {
         //
         development: {
             host: "127.0.0.1",     // Localhost (default: none)
-            port: 8545,            // Standard Ethereum port (default: none)
+            port: 7545,            // Standard Ethereum port (default: none)
             network_id: "*",       // Any network (default: none)
         },
 
@@ -53,9 +54,9 @@ module.exports = {
             network_id: 4,
             gas: 5500000,
             gasPrice: 10000000000,
-            confirmations: 2,
-            timeoutBlocks: 200,
-            skipDryRun: true
+            // confirmations: 2,
+            // timeoutBlocks: 200,
+            // skipDryRun: true
         }
 
         // Another network with more advanced options...
@@ -95,7 +96,7 @@ module.exports = {
     // Configure your compilers
     compilers: {
         solc: {
-        version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
+        version: "^0.5.5",    // Fetch exact version from solc-bin (default: truffle's version)
         // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
         // settings: {          // See the solidity docs for advice about optimization and evmVersion
         //  optimizer: {
