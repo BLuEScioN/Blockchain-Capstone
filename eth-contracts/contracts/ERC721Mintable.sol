@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >= 0.5.0;
 
 import 'openzeppelin-solidity/contracts/utils/Address.sol';
 import 'openzeppelin-solidity/contracts/drafts/Counters.sol';
@@ -243,8 +243,8 @@ contract ERC721 is Pausable, ERC165 {
     function _mint(address to, uint256 tokenId) internal {
 
         // TODO revert if given tokenId already exists or given address is invalid
-        require(_exists(tokenId), "The tokenId already exists.");
-        require(to == address(0), "to address is invalid.");
+        require(!_exists(tokenId), "The tokenId already exists.");
+        require(to != address(0), "to address is invalid.");
 
         // TODO mint tokenId to given address & increase token count of owner
         _tokenOwner[tokenId] = to;
@@ -538,10 +538,10 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //  TODO's: Create CustomERC721Token contract that inherits from the ERC721Metadata contract. You can name this contract as you please
 //  1) Pass in appropriate values for the inherited ERC721Metadata contract
 //      - make the base token uri: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/
-contract ERC721MintableComplete is ERC721Metadata("Complete Token", "CT", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
+contract ERC721MintableComplete is ERC721Metadata("RealEstateToken", "RET", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
     //  2) create a public mint() that does the following:
     //      -can only be executed by the contract owner
-    //      -takes in a 'to' address, tokenId, and tokenURI as parameters
+    //      -takes in a 'to' address, tokenId, and tokenURI (unused) as parameters
     //      -returns a true boolean upon completion of the function
     //      -calls the superclass mint and setTokenURI functions
     function mint

@@ -1,15 +1,15 @@
-pragma solidity >=0.4.21 <0.6.0;
+pragma solidity >= 0.4.21;
 
 import "./ERC721Mintable.sol";
-import "./verifier.sol";
+import "./Verifier.sol";
     // TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
 
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
 contract SolnSquareVerifier is ERC721MintableComplete {
-    SquareVerifier public verifier;
+    Verifier public verifier;
 
     constructor(address verifierAddress) ERC721MintableComplete() public{
-        verifier = SquareVerifier(verifierAddress);
+        verifier = Verifier(verifierAddress);
     }
 
     // TODO define a solutions struct that can hold an index & an address
@@ -35,8 +35,8 @@ contract SolnSquareVerifier is ERC721MintableComplete {
         emit SolutionAdded(index, addr);
     }
 
-    function generateKey(uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory inputs) vew internal returns (bytes32) {
-        return keccak256(abi.encodedPacked(a, b , c, inputs));
+    function generateKey(uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory inputs) pure public returns (bytes32) {
+        return keccak256(abi.encodePacked(a, b , c, inputs));
     }
 
     // TODO Create a function to mint new NFT only after the solution has been verified

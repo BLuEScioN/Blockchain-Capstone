@@ -17,7 +17,7 @@ contract('SolnSquareVerifier', accounts => {
     it('Test if a new solution can be added for contract - SolnSquareVerifier', async function () {
         const {proof: {a, b, c}, inputs: inputs} = proof;
 
-        let key = await this.contract.getKey.call(a, b, c, inputs);
+        let key = await this.contract.generateKey(a, b, c, inputs);
 
         let result = await this.contract.addSolution(2, account1, key);
 
@@ -28,11 +28,11 @@ contract('SolnSquareVerifier', accounts => {
     it('Test if an ERC721 token can be minted for contract - SolnSquareVerifier', async function () {
         const {proof: {a, b, c}, inputs: inputs} = proof;
 
-        let totalSupply = (await this.contract.totalSupply.call()).toNumber();
+        let totalSupply = (await this.contract.totalSupply()).toNumber();
 
-        let isVerifiedProof = await this.ontract.mintToken(account2, 1, a, b, c, inputs, { from: account1 });
+        await this.contract.mintToken(account2, 1, a, b, c, inputs, { from: account1 });
 
-        let newTotalSupply = (await this.contract.totalSupply.call()).toNumber();
+        let newTotalSupply = (await this.contract.totalSupply()).toNumber();
 
         assert.equal(totalSupply + 1, newTotalSupply, "Invalid proof");
     });

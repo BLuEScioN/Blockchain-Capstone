@@ -13,7 +13,7 @@ contract('SquareVerifier', accounts => {
 
     // Test verification with correct proof
     it ("Test verification with correct proof", async function () {
-        const { proof: { a, b, c }, input: inputs } = proof;
+        const { proof: { a, b, c }, inputs: inputs } = proof;
 
         let result = await this.contract.verifyTx.call(a, b, c, inputs, { from: account1 });
         assert.equal(result, true, "Proof is incorrect");
