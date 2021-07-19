@@ -22,7 +22,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
     Solution[] solutions;
 
     // TODO define a mapping to store unique solutions submitted
-    mapping(bytes32 => bool) private uniqueSolutions;
+    mapping(bytes32 => Solution) private uniqueSolutions;
 
     // TODO Create an event to emit when a solution is added
     event SolutionAdded(uint256 index, address addr);
@@ -31,7 +31,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
     function addSolution(uint256 index, address addr, bytes32 key) public {
         Solution memory solution = Solution({ index: index, addr: addr });
         solutions.push(solution);
-        uniqueSolutions[key] = true;
+        uniqueSolutions[key].addr = addr;
         emit SolutionAdded(index, addr);
     }
 
@@ -44,7 +44,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
     //  - make sure you handle metadata as well as tokenSuplly
     function mintToken(address to , uint256 tokenId, uint[2] memory a, uint[2][2] memory b, uint[2] memory c, uint[2] memory inputs) public {
         bytes32 key = generateKey(a, b, c, inputs);
-        require(!uniqueSolutions[key], "Solution already exists");
+        require(uniqueSolutions[key].addr == address(0), "Solution already exists");
         bool isValidProof = verifier.verifyTx(a, b, c, inputs);
         require(isValidProof, "Invalid proof");
         addSolution(tokenId, to, key);

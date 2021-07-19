@@ -1,37 +1,42 @@
 import Web3 from "web3";
 import ERC721 from "../../eth-contracts/build/contracts/ERC721MintableComplete.json";
 import SolnSquareVerifier from "../../eth-contracts/build/contracts/SolnSquareVerifier.json";
-let proof = require('../../eth-contracts/test/proof.json');
+import proofs from "./proofs/proofs";
 
 const App = {
     web3: null,
     account: null,
     accounts: null,
     meta: null,
-    erc721ContractAddress: '0xa08A617E9Ad682053EF1eCA9424158C922a23fff',
-    solnSquareVeriferContractAddress: '0xdd5503E258E5902FA28A4FbB31051c1448AadeD8',
-    verifierContractAddress: '0x09A6C01a28F2583a190834D892B1b28AaC3e96A1',
+    erc721ContractAddress: '0x5771C056e8b3fbaC58DF5f8F8805eD084d0Fb367',
+    solnSquareVerifierContractAddress: '0x9Be84f3E670011CC6456713EC2e7Cf160e96A036',
+    verifierContractAddress: '0x63857bc068daCC364D2cA8cfB24A35087798c5EA',
+    proofIndex: 0,
 
     start: async function() {
         const { web3 } = this;
 
         try {
-        this.erc721Contract = new web3.eth.Contract(
-            ERC721.abi,
-            this.erc721ContractAddress,
-        );
+            this.erc721Contract = new web3.eth.Contract(
+                ERC721.abi,
+                this.erc721ContractAddress,
+            );
 
-        this.solnSquareVerifierContract = new Web3.eth.Contract(
-            SolnSquareVerifier.abi,
-            this.solnSquareVeriferContractAddress
-        );
+            this.solnSquareVerifierContract = new web3.eth.Contract(
+                SolnSquareVerifier.abi,
+                this.solnSquareVerifierContractAddress
+            );
 
-        // get accounts
-        const accounts = await web3.eth.getAccounts();
-        this.account = accounts[0];
-        this.accounts = accounts;
+            // get accounts
+            const accounts = await web3.eth.getAccounts();
+            console.log({ accounts });
+            this.account = accounts[0];
+            console.log('current account:', this.account);
+            this.accounts = accounts;
+            console.log('proofIndex', this.proofIndex)
         } catch (error) {
-        console.error("Could not connect to contract or chain.");
+            console.error("Could not connect to contract or chain.");
+            console.error(error);
         }
         
         // Acccounts now exposed
@@ -44,17 +49,20 @@ const App = {
     },
 
     mint: async function() {
+        event.preventDefault();
+
         console.log('minting started');
 
-        const { proof: { a, b, c }, inputs: inputs } = proof;
-        console.log({ a, b, c, inputs });
+        const { proof: { a, b, c }, inputs: inputs } = proofs[this.proofIndex++];
+        console.log('mint parameters:', { a, b, c, inputs, proofIndex: this.proofIndex });
 
         const tokenId = document.getElementById("tokenId").value;
         console.log({ tokenId });
 
         try {
-            this.solnSquareVeriferContract.mintToken(this.account, a, b, c, inputs, { from: this.account });
+            let tx = await this.solnSquareVerifierContract.methods.mintToken(this.account, tokenId, a, b, c, inputs).send({ from: this.account, gas: 4500000  });
             console.log(`Real estate property ${tokenId} registered to ${this.account}`);
+            console.log("Tx:", tx.transactionHash);
         } catch (err) {
             console.error('minting error');
             console.error(err);
@@ -69,6 +77,7 @@ window.addEventListener("load", async function() {
     // use MetaMask's provider
     App.web3 = new Web3(window.ethereum);
     try {
+        console.log("Asking for permission to access accounts")
         await window.ethereum.enable(); // get permission to access accounts
     } catch (error) {
         console.error("Permission to access account denied");
